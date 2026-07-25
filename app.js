@@ -2,7 +2,7 @@ const ADMIN_EMAIL = "zandrooortells@gmail.com";
 
 async function init() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").catch(console.error);
+    navigator.serviceWorker.register("sw.js").catch(console.error);
   }
   await GoogleAuth.init(renderTopbar);
   renderTopbar();
