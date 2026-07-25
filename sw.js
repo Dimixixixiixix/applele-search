@@ -50,7 +50,7 @@ self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   const match = url.pathname.match(/^\/articles\/([^/]+)\/?$/);
-  if (!match) return; // let everything else pass through normally
+  if (!match) return; 
 
   const slug = decodeURIComponent(match[1]);
   event.respondWith(
