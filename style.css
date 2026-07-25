@@ -13,8 +13,6 @@ body {
   margin: 0;
   padding: 16px 0;
 }
-
-/* top-right controls */
 .topbar {
   position: fixed;
   top: 10px;
@@ -22,21 +20,6 @@ body {
   display: flex;
   gap: 8px;
   z-index: 20;
-}
-.topbar button, .topbar a.button {
-  background-color: #232324;
-  color: #fff;
-  border: 1px solid red;
-  padding: 8px 14px;
-  font-family: Verdana;
-  font-size: 13px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-decoration: none;
-}
-.topbar button:hover, .topbar a.button:hover {
-  background-color: red;
-  color: #0f0f0f;
 }
 .topbar .user-chip {
   display: flex;
@@ -53,7 +36,26 @@ body {
   height: 20px;
   border-radius: 50%;
 }
-
+a.button, button.button {
+  background-color: #232324;
+  color: #fff;
+  border: 1px solid red;
+  padding: 8px 14px;
+  font-family: Verdana;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 8px;
+}
+a.button:hover, button.button:hover {
+  background-color: red;
+  color: #0f0f0f;
+}
+a.button:last-child, button.button:last-child {
+  margin-right: 0;
+}
 .img {
   text-align: center;
 }
@@ -62,7 +64,6 @@ body {
   bottom: 0;
   left: 0;
 }
-
 /* search + results */
 .search-wrap {
   max-width: 1000px;
@@ -102,6 +103,9 @@ body {
   color: #ccc;
   font-size: 14px;
 }
+.result-card .button {
+  margin-top: 8px;
+}
 .result-meta {
   font-size: 12px;
   color: #888;
@@ -112,7 +116,6 @@ body {
   text-align: center;
   padding: 40px 0;
 }
-
 /* article editor page */
 .editor-wrap {
   max-width: 800px;
