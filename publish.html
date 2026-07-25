@@ -83,11 +83,16 @@
           action
             .then(function (article) {
               publishBtn.disabled = false;
+              if (!article || !article.slug) {
+                console.error("Publish/edit resolved without a valid article:", article);
+                statusEl.textContent =
+                  "Server accepted the request but didn't return a valid article - open the console (F12) for details.";
+                return;
+              }
               statusEl.textContent = "Saved! Redirecting...";
-              var targetSlug = (article && article.slug) || editSlug;
               setTimeout(function () {
                 window.location.href =
-                  "https://dimixixixiixix.github.io/applele-search/#/articles/" + encodeURIComponent(targetSlug);
+                  "https://dimixixixiixix.github.io/applele-search/#/articles/" + encodeURIComponent(article.slug);
               }, 1000);
             })
             .catch(function (err) {
