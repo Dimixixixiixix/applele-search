@@ -52,7 +52,13 @@ const GoogleAuth = (() => {
   }
   function getUser() {
     const raw = localStorage.getItem("applele-user");
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const user = JSON.parse(raw);
+    if (!user.idToken) {
+      localStorage.removeItem("applele-user");
+      return null;
+    }
+    return user;
   }
   function logout() {
     localStorage.removeItem("applele-user");
