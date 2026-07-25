@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Article - Applele Search</title>
+    <link rel="icon" href="Apple.png">
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="button" href="/">&larr; Back to search</a>
+    </div>
+    <h1 class="title">Write a new article</h1>
+    <hr>
+    <div class="editor-wrap">
+      <input type="text" id="article-title" placeholder="Article title">
+      <textarea id="article-markdown" placeholder="Write in markdown...
+# Heading
+**bold** *italic* [link](https://example.com)"></textarea>
+      <button id="publish-btn">Publish</button>
+      <p id="publish-status" style="color:#999;font-size:13px;"></p>
+    </div>
+    <script src="/articles-ws.js"></script>
+    <script src="/google-auth.js"></script>
+    <script>
+      var currentUser = GoogleAuth.getUser();
+      if (!currentUser) {
+        alert("Log in with Google first to add an article.");
+        window.location.href = "/";
+      }
+
+      function handlePublishClick() {
+        try {
+          var titleVal = document.getElementById("article-title").value.trim();
+          var markdownVal = document.getElementById("article-markdown").value.trim();
+          var statusEl = document.getElementById("publish-status");
+          var btn = document.getElementById("publish-btn");
+
+          console.log("publish clicked", { titleVal: titleVal, markdownVal: markdownVal });
+
+          if (!titleVal || !markdownVal) {
+            statusEl.textContent = "Add a title and some content first.";
+            return;
+          }
+
+          btn.disabled = true;
+          statusEl.textContent = "Publishing...";
+
+          if (typeof ArticlesWS === "undefined") {
+            statusEl.textContent = "Error: ArticlesWS script did not load.";
+            btn.disabled = false;
+            return;
+          }
+
+          console.log("calling ArticlesWS.save...");
+
+          ArticlesWS.save({
+            title: titleVal,
+            markdown: markdownVal,
+            author: currentUser.username
+          }).then(function (article) {
+            console.log("ArticlesWS.save resolved with:", article);
+            btn.disabled = false;
+            if (!article) {
+              statusEl.textContent = "Couldn't reach the server - check your connection and try again.";
+              return;
+            }
+            statusEl.textContent = "Published! Redirecting...";
+            setTimeout(function () {
+              window.location.href = "/";
+            }, 1200);
+          }).catch(function (err) {
+            console.error("Publish promise rejected:", err);
+            btn.disabled = false;
+            statusEl.textContent = "Error: " + (err && err.message ? err.message : String(err));
+            alert("Full error:\n" + (err && err.stack ? err.stack : String(err)));
+          });
+        } catch (err) {
+          console.error("Publish failed synchronously:", err);
+          alert("Sync error:\n" + (err && err.stack ? err.stack : String(err)));
+          var btn2 = document.getElementById("publish-btn");
+          if (btn2) btn2.disabled = false;
+        }
+      }
+
+      document.getElementById("publish-btn").addEventListener("click", handlePublishClick);
+    </script>
+  </body>
+</html>
