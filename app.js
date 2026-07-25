@@ -96,6 +96,7 @@ async function renderDevtools(user) {
     return;
   }
   const articles = await ArticlesWS.all();
+  const logs = window.AppleleDebugLog ? window.AppleleDebugLog.getAll() : [];
   results.innerHTML = `
     <div class="article-body">
       <h2>Devtools</h2>
@@ -116,8 +117,27 @@ async function renderDevtools(user) {
               .join("")
           : "<p>No articles.</p>"
       }
+      <h3>Console Logs</h3>
+      <p class="result-meta">Captured on this device only (console.log/warn/error, uncaught errors, failed promises). Handy for debugging on iPad where there's no real DevTools.</p>
+      <div style="margin-bottom:8px;">
+        <button id="log-refresh" class="button">Refresh</button>
+        <button id="log-clear" class="button">Clear</button>
+      </div>
+      <pre id="log-output" style="background:#111;color:#0f0;padding:12px;border-radius:6px;max-height:400px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(formatLogs(logs))}</pre>
       <p><a href="#" onclick="window.location.hash=''; return false;">&larr; back to search</a></p>
     </div>`;
+
+  const logOutput = document.getElementById("log-output");
+  document.getElementById("log-refresh").addEventListener("click", () => {
+    const fresh = window.AppleleDebugLog ? window.AppleleDebugLog.getAll() : [];
+    logOutput.textContent = formatLogs(fresh);
+    logOutput.scrollTop = logOutput.scrollHeight;
+  });
+  document.getElementById("log-clear").addEventListener("click", () => {
+    if (window.AppleleDebugLog) window.AppleleDebugLog.clear();
+    logOutput.textContent = formatLogs([]);
+  });
+  logOutput.scrollTop = logOutput.scrollHeight;
 
   results.querySelectorAll(".dt-delete").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -140,6 +160,13 @@ async function renderDevtools(user) {
       }
     });
   });
+}
+
+function formatLogs(entries) {
+  if (!entries.length) return "(no logs yet)";
+  return entries
+    .map((e) => `[${new Date(e.t).toLocaleTimeString()}] ${e.level.toUpperCase()}: ${e.msg}`)
+    .join("\n");
 }
 
 function renderMarkdown(md) {
