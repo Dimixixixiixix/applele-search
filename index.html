@@ -8,23 +8,18 @@
     <link href="style.css" rel="stylesheet" type="text/css" media="all">
   </head>
   <body>
-
     <div class="topbar" id="topbar">
     </div>
-
     <h1 class="title">Applele Search</h1>
     <hr>
-
     <div class="search-wrap">
       <label for="search"></label>
       <input type="search" id="search" name="search" placeholder="Search articles...">
     </div>
-
     <div class="results" id="results">
       <p class="empty-state">No articles yet. Log in and add one!</p>
     </div>
-
-
+    <script src="debug-log.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="articles-ws.js"></script>
     <script src="google-auth.js"></script>
