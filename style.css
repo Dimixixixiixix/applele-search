@@ -1,0 +1,166 @@
+body {
+  background-color: #0f0f0f;
+  font-family: Verdana;
+  background-image: url('Apple.png');
+  background-repeat: repeat;
+  margin: 0;
+  color: #eee;
+}
+.title {
+  text-align: center;
+  background-color: #232324;
+  color: red;
+  margin: 0;
+  padding: 16px 0;
+}
+
+/* top-right controls */
+.topbar {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+.topbar button, .topbar a.button {
+  background-color: #232324;
+  color: #fff;
+  border: 1px solid red;
+  padding: 8px 14px;
+  font-family: Verdana;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.topbar button:hover, .topbar a.button:hover {
+  background-color: red;
+  color: #0f0f0f;
+}
+.topbar .user-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #232324;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.topbar .user-chip img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.img {
+  text-align: center;
+}
+.neo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+/* search + results */
+.search-wrap {
+  max-width: 1000px;
+  margin: 30px auto 0;
+  padding: 0 16px;
+}
+#search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 2px solid #3b3bd6;
+}
+.results {
+  max-width: 1000px;
+  margin: 18px auto 60px;
+  padding: 0 16px;
+}
+.result-card {
+  background-color: rgba(35,35,36,0.9);
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+.result-card h3 {
+  margin: 0 0 4px;
+  color: red;
+}
+.result-card h3 a {
+  color: red;
+  text-decoration: none;
+}
+.result-card p {
+  margin: 0;
+  color: #ccc;
+  font-size: 14px;
+}
+.result-meta {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+}
+.empty-state {
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* article editor page */
+.editor-wrap {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+.editor-wrap input[type="text"],
+.editor-wrap textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #1a1a1a;
+  color: #eee;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.editor-wrap textarea {
+  min-height: 300px;
+  resize: vertical;
+}
+.editor-wrap button {
+  background-color: red;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.article-body {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 24px 32px;
+  line-height: 1.6;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+.article-body h1, .article-body h2, .article-body h3 {
+  color: #1a1a1a;
+}
+.article-body a {
+  color: #b30000;
+}
+.article-body .result-meta {
+  color: #666;
+}
