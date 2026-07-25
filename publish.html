@@ -11,7 +11,7 @@
     <div class="topbar">
       <a class="button" href="https://dimixixixiixix.github.io/applele-search/index.html">&larr; Back to search</a>
     </div>
-    <h1 class="title">Write a new article</h1>
+    <h1 class="title" id="page-title">Write a new article</h1>
     <hr>
     <div class="editor-wrap">
       <input type="text" id="article-title" placeholder="Article title">
@@ -24,67 +24,83 @@
     <script src="articles-ws.js"></script>
     <script src="google-auth.js"></script>
     <script>
+      var ADMIN_EMAIL = "zandrooortells@gmail.com";
       var currentUser = GoogleAuth.getUser();
       if (!currentUser) {
         alert("Log in with Google first to add an article.");
         window.location.href = "https://dimixixixiixix.github.io/applele-search/#";
       }
 
+      var editSlug = new URLSearchParams(window.location.search).get("slug");
+      var titleEl = document.getElementById("article-title");
+      var mdEl = document.getElementById("article-markdown");
+      var publishBtn = document.getElementById("publish-btn");
+      var statusEl = document.getElementById("publish-status");
+
+      if (editSlug) {
+        document.getElementById("page-title").textContent = "Edit article";
+        publishBtn.textContent = "Save changes";
+        ArticlesWS.get(editSlug).then(function (article) {
+          if (!article) {
+            statusEl.textContent = "Article not found (still syncing? try refreshing).";
+            return;
+          }
+          if (article.authorId !== currentUser.id && currentUser.email !== ADMIN_EMAIL) {
+            alert("You can only edit your own articles.");
+            window.location.href =
+              "https://dimixixixiixix.github.io/applele-search/#/articles/" + encodeURIComponent(editSlug);
+            return;
+          }
+          titleEl.value = article.title;
+          mdEl.value = article.markdown;
+        });
+      }
+
       function handlePublishClick() {
         try {
-          var titleVal = document.getElementById("article-title").value.trim();
-          var markdownVal = document.getElementById("article-markdown").value.trim();
-          var statusEl = document.getElementById("publish-status");
-          var btn = document.getElementById("publish-btn");
-
-          console.log("publish clicked", { titleVal: titleVal, markdownVal: markdownVal });
-
+          var titleVal = titleEl.value.trim();
+          var markdownVal = mdEl.value.trim();
           if (!titleVal || !markdownVal) {
             statusEl.textContent = "Add a title and some content first.";
             return;
           }
+          publishBtn.disabled = true;
+          statusEl.textContent = editSlug ? "Saving..." : "Publishing...";
 
-          btn.disabled = true;
-          statusEl.textContent = "Publishing...";
+          var action = editSlug
+            ? ArticlesWS.edit({
+                slug: editSlug,
+                title: titleVal,
+                markdown: markdownVal,
+                idToken: currentUser.idToken,
+              })
+            : ArticlesWS.save({
+                title: titleVal,
+                markdown: markdownVal,
+                idToken: currentUser.idToken,
+              });
 
-          if (typeof ArticlesWS === "undefined") {
-            statusEl.textContent = "Error: ArticlesWS script did not load.";
-            btn.disabled = false;
-            return;
-          }
-
-          console.log("calling ArticlesWS.save...");
-
-          ArticlesWS.save({
-            title: titleVal,
-            markdown: markdownVal,
-            author: currentUser.username
-          }).then(function (article) {
-            console.log("ArticlesWS.save resolved with:", article);
-            btn.disabled = false;
-            if (!article) {
-              statusEl.textContent = "Couldn't reach the server - check your connection and try again.";
-              return;
-            }
-            statusEl.textContent = "Published! Redirecting...";
-            setTimeout(function () {
-              window.location.href = "https://dimixixixiixix.github.io/applele-search/#";
-            }, 1200);
-          }).catch(function (err) {
-            console.error("Publish promise rejected:", err);
-            btn.disabled = false;
-            statusEl.textContent = "Error: " + (err && err.message ? err.message : String(err));
-            alert("Full error:\n" + (err && err.stack ? err.stack : String(err)));
-          });
+          action
+            .then(function (article) {
+              publishBtn.disabled = false;
+              statusEl.textContent = "Saved! Redirecting...";
+              var targetSlug = (article && article.slug) || editSlug;
+              setTimeout(function () {
+                window.location.href =
+                  "https://dimixixixiixix.github.io/applele-search/#/articles/" + encodeURIComponent(targetSlug);
+              }, 1000);
+            })
+            .catch(function (err) {
+              publishBtn.disabled = false;
+              statusEl.textContent = "Error: " + (err && err.message ? err.message : String(err));
+            });
         } catch (err) {
           console.error("Publish failed synchronously:", err);
           alert("Sync error:\n" + (err && err.stack ? err.stack : String(err)));
-          var btn2 = document.getElementById("publish-btn");
-          if (btn2) btn2.disabled = false;
+          publishBtn.disabled = false;
         }
       }
-
-      document.getElementById("publish-btn").addEventListener("click", handlePublishClick);
+      publishBtn.addEventListener("click", handlePublishClick);
     </script>
   </body>
 </html>
